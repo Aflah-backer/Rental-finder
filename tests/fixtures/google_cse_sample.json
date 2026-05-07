@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "title": "2 BHK Flat for Rent in Koramangala - Rs 28,000/month",
+      "link": "https://example-broker.in/koramangala-2bhk-1",
+      "displayLink": "example-broker.in",
+      "snippet": "Spacious 2 BHK semi-furnished apartment in Koramangala. Rent Rs 28,000 per month, 1100 sqft."
+    },
+    {
+      "title": "1 RK Studio HSR Layout - Rs 12k",
+      "link": "https://www.facebook.com/groups/blr-rentals/posts/abc",
+      "displayLink": "facebook.com",
+      "snippet": "1 RK fully furnished studio in HSR Layout, Rs 12,000 per month"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+# Don't bake secrets into the image.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Don't bake a stale SQLite cache or scraped HTML dumps into the image.
+diag_dumps/
+*.sqlite
+*.sqlite-journal
+
+# Browser session state.
+fb_state.json
+playwright-state*
+
+# Python build / test detritus.
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Tests fixtures (parser tests don't run in the container).
+tests/
+
+# Local-only docs / build outputs.
+results.json
+results.csv
+smoke_results.*
+
+# Editor metadata.
+.vscode/
+.idea/
+.DS_Store

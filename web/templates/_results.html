@@ -1,0 +1,76 @@
+{% if total_found == 0 %}
+  <div class="text-center py-12 bg-white dark:bg-ink-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-card">
+    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto w-12 h-12 text-amber-400 mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 9v4" /><path d="M12 17h.01" /><circle cx="12" cy="12" r="10" />
+    </svg>
+    <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">No listings found</h3>
+    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Try a wider price range, fewer filters, or a different locality.</p>
+  </div>
+{% elif not listings %}
+  <div class="text-center py-12 bg-white dark:bg-ink-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-card">
+    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto w-12 h-12 text-amber-400 mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 9v4" /><path d="M12 17h.01" /><circle cx="12" cy="12" r="10" />
+    </svg>
+    <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">No listings matched your filters</h3>
+    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
+      Sources returned <span class="font-medium">{{ total_found }}</span> listings
+      ({{ after_dedupe }} after dedupe), but none matched your price / BHK / furnishing.
+      Try widening the price range or setting BHK / Furnishing to "Any".
+    </p>
+  </div>
+{% else %}
+
+<!-- Per-source summary -->
+<div class="mb-6 flex flex-wrap items-center gap-2">
+  <span class="text-sm font-medium text-slate-600 dark:text-slate-300">Sources:</span>
+  {% for s in summary %}
+    {% if s.ok %}
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium {% if s.count > 0 %}bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40{% else %}bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700{% endif %}">
+        <span class="w-1.5 h-1.5 rounded-full {% if s.count > 0 %}bg-emerald-500{% else %}bg-slate-400{% endif %}"></span>
+        {{ s.name }} <span class="opacity-70">{{ s.count }}</span>
+        <span class="opacity-50">{{ s.elapsed_s }}s</span>
+      </span>
+    {% else %}
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/40" title="{{ s.error }}">
+        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+        {{ s.name }} error
+      </span>
+    {% endif %}
+  {% endfor %}
+  <span class="ml-auto text-xs text-slate-500 dark:text-slate-400">
+    Found {{ total_found }} - deduped {{ after_dedupe }}{% if after_filters is defined %} - matched filters {{ after_filters }}{% endif %} - showing top {{ listings|length }}
+  </span>
+</div>
+
+<!-- Sort bar -->
+{% set sort_opts = [
+  ("score-desc",   "Best match",  "M12 2l2.39 7.36H22l-6.18 4.49 2.39 7.36L12 16.7l-6.21 4.51 2.39-7.36L2 9.36h7.61L12 2z"),
+  ("price-asc",    "Price: low",  "M3 12h12M3 6h18M3 18h6"),
+  ("price-desc",   "Price: high", "M3 6h18M3 12h12M3 18h6"),
+  ("recent",       "Newest",      "M12 8v4l3 3M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"),
+  ("completeness", "Most complete","M9 12l2 2 4-4M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"),
+] %}
+<div data-sort-bar class="mb-5 flex items-center gap-3 flex-wrap">
+  <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">Sort by</span>
+  <div class="inline-flex flex-wrap gap-1 p-1 rounded-xl bg-slate-100 dark:bg-ink-800 border border-slate-200/70 dark:border-slate-700">
+    {% for value, label, path in sort_opts %}
+    <button
+      type="button"
+      data-sort-value="{{ value }}"
+      class="sort-pill inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-ink-700/60 transition data-[active=true]:bg-white data-[active=true]:dark:bg-ink-700 data-[active=true]:text-brand-700 data-[active=true]:dark:text-brand-300 data-[active=true]:shadow-sm"
+      {% if loop.first %}data-active="true"{% endif %}
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ path }}"/></svg>
+      {{ label }}
+    </button>
+    {% endfor %}
+  </div>
+  <span class="text-[11px] text-slate-400 dark:text-slate-500 hidden md:inline ml-auto">unknowns shown last</span>
+</div>
+
+<!-- Cards grid -->
+<div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+  {% for l in listings %}{% include "_card.html" %}{% endfor %}
+</div>
+
+{% endif %}

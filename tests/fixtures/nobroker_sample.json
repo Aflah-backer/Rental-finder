@@ -1,0 +1,25 @@
+{
+  "data": [
+    {
+      "id": "NB12345",
+      "title": "2 BHK in Koramangala",
+      "titleSlug": "2-bhk-koramangala",
+      "rent": 30000,
+      "type": "BHK2",
+      "furnishing": "SEMI_FURNISHED",
+      "localityName": "Koramangala",
+      "cityName": "Bangalore",
+      "propertySize": 1050
+    },
+    {
+      "id": "NB67890",
+      "title": "1 RK Studio in HSR",
+      "rent": 11000,
+      "bhk": 0.5,
+      "furnishing": "FULLY_FURNISHED",
+      "localityName": "HSR Layout",
+      "cityName": "Bangalore",
+      "propertySize": 320
+    }
+  ]
+}

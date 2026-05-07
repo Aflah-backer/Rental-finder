@@ -1,0 +1,45 @@
+<article
+  class="group bg-white dark:bg-ink-900 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-500/60 hover:-translate-y-0.5 hover:shadow-lg transition-all p-5 flex flex-col"
+  data-source="{{ l.source }}"
+  data-price="{{ l.price_inr if l.price_inr is not none else '' }}"
+  data-score="{{ '%.4f'|format(l.score) if l.score is not none else '0' }}"
+  data-posted="{{ l.posted_at.isoformat() if l.posted_at else '' }}"
+  data-completeness="{{ ((l.title|length > 0) + (1 if l.price_inr else 0) + (1 if l.bhk else 0) + (1 if l.area_sqft else 0) + (1 if l.locality else 0) + (1 if l.furnishing and l.furnishing != 'unknown' else 0)) }}"
+>
+  <div class="flex items-center justify-between mb-3">
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wide
+        {% if l.source == 'magicbricks' %}bg-rose-50 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300
+        {% elif l.source == '99acres' %}bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300
+        {% elif l.source == 'olx' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300
+        {% elif l.source == 'google' %}bg-sky-50 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300
+        {% elif l.source == 'nobroker' %}bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300
+        {% elif l.source == 'housing' %}bg-fuchsia-50 text-fuchsia-700 dark:bg-fuchsia-500/15 dark:text-fuchsia-300
+        {% else %}bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300{% endif %}">{{ l.source }}</span>
+    {% if l.score is not none %}
+    <span class="inline-flex items-center gap-1 text-xs font-semibold text-slate-700 dark:text-slate-300" title="Match score">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.39 7.36H22l-6.18 4.49 2.39 7.36L12 16.7l-6.21 4.51 2.39-7.36L2 9.36h7.61L12 2z"/></svg>
+      {{ "%.2f"|format(l.score) }}
+    </span>
+    {% endif %}
+  </div>
+  <div class="mb-2">
+    {% if l.price_inr %}
+    <div class="text-2xl font-bold text-ink-900 dark:text-slate-50">Rs {{ "{:,}".format(l.price_inr) }}<span class="text-sm font-normal text-slate-400 dark:text-slate-500"> /mo</span></div>
+    {% else %}
+    <div class="text-2xl font-bold text-slate-300 dark:text-slate-600">Price n/a</div>
+    {% endif %}
+  </div>
+  <h3 class="text-sm font-medium text-slate-700 dark:text-slate-300 line-clamp-2 mb-3 min-h-[2.5rem]">{{ l.title }}</h3>
+  <div class="flex flex-wrap gap-1.5 mb-3 text-xs">
+    {% if l.bhk %}<span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-50 dark:bg-ink-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300">{% if l.bhk == 0.5 %}RK{% else %}{{ "%g"|format(l.bhk) }} BHK{% endif %}</span>{% endif %}
+    {% if l.area_sqft %}<span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-50 dark:bg-ink-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300">{{ l.area_sqft }} sqft</span>{% endif %}
+    {% if l.furnishing and l.furnishing != "unknown" %}<span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-50 dark:bg-ink-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 capitalize">{{ l.furnishing }}</span>{% endif %}
+    {% if l.locality %}<span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-50 dark:bg-ink-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300">{{ l.locality }}</span>{% endif %}
+  </div>
+  <div class="mt-auto pt-3 border-t border-slate-100 dark:border-slate-800">
+    <a href="{{ l.url }}" target="_blank" rel="noreferrer noopener" class="inline-flex items-center justify-center gap-1.5 w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-ink-800 hover:bg-brand-50 dark:hover:bg-brand-500/15 hover:text-brand-700 dark:hover:text-brand-300 text-sm font-medium text-slate-700 dark:text-slate-300 transition">
+      View listing
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+    </a>
+  </div>
+</article>

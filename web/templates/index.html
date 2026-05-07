@@ -1,0 +1,865 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="min-h-screen bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-ink-950 dark:via-ink-900 dark:to-ink-950">
+
+  <!-- Top bar -->
+  <header class="border-b border-slate-200/70 dark:border-slate-800/80 bg-white/70 dark:bg-ink-900/70 backdrop-blur sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2 font-bold text-xl tracking-tight text-ink-900 dark:text-slate-100">
+        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-brand-500 text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12l9-9 9 9" /><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10" /><path d="M9 21V12h6v9" />
+          </svg>
+        </span>
+        <span>Rental<span class="text-brand-600 dark:text-brand-300">Finder</span></span>
+      </a>
+      <nav class="flex items-center gap-3 sm:gap-5 text-sm text-slate-600 dark:text-slate-300">
+        <a href="#how-to-use" class="hidden sm:inline hover:text-slate-900 dark:hover:text-white transition">How to use</a>
+        <a href="#faq" class="hidden sm:inline hover:text-slate-900 dark:hover:text-white transition">FAQ</a>
+        <span class="hidden sm:inline text-slate-400 dark:text-slate-500">|</span>
+        <button
+          id="theme-toggle"
+          type="button"
+          aria-label="Toggle dark mode"
+          title="Toggle theme"
+          class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-ink-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-brand-300 dark:hover:border-brand-300 transition"
+        >
+          <span class="theme-icon-light">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+          <span class="theme-icon-dark">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="max-w-7xl mx-auto px-6 pt-12 pb-6 text-center">
+    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-brand-50 text-brand-700 border border-brand-100 dark:bg-brand-500/10 dark:text-brand-300 dark:border-brand-500/30 mb-4">
+      <span class="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span>
+      Live India rentals
+    </span>
+    <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-ink-900 dark:text-slate-50">
+      Find your next rental.
+    </h1>
+    <p class="mt-3 text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+      Aggregates listings from MagicBricks, 99acres, OLX, and more &mdash; deduped, filtered,
+      and ranked so the best matches come first.
+    </p>
+  </section>
+
+  <!-- Search card -->
+  <section class="max-w-5xl mx-auto px-6">
+    <form
+      id="search-form"
+      class="bg-white dark:bg-ink-900 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 p-6 sm:p-8"
+    >
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+
+        <!-- City -->
+        <div class="md:col-span-3 relative" data-combobox="city">
+          <label class="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+            <span>City</span>
+            <span class="text-[10px] font-normal text-slate-400 dark:text-slate-500 normal-case">click to pick</span>
+          </label>
+          <div class="relative">
+            <input
+              id="city"
+              name="city"
+              type="text"
+              autocomplete="off"
+              placeholder="Choose or type a city"
+              value="{{ default_city }}"
+              class="combobox-input w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-ink-800 dark:text-slate-100 hover:border-slate-300 dark:hover:border-slate-600 focus:bg-white dark:focus:bg-ink-800 focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 pl-3 pr-9 py-2.5 text-sm transition cursor-pointer"
+            />
+            <button type="button" tabindex="-1" class="combobox-toggle absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+          <ul class="combobox-list hidden absolute z-30 left-0 right-0 mt-1 max-h-60 overflow-auto bg-white dark:bg-ink-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl text-sm"></ul>
+        </div>
+
+        <!-- Locality -->
+        <div class="md:col-span-4 relative" data-combobox="locality">
+          <label class="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+            <span>Locality</span>
+            <span id="locality-hint" class="text-[10px] font-normal text-slate-400 dark:text-slate-500 normal-case"></span>
+          </label>
+          <div class="relative">
+            <input
+              id="locality"
+              name="locality"
+              type="text"
+              autocomplete="off"
+              placeholder="Choose a popular area or type your own"
+              value="Koramangala"
+              class="combobox-input w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-ink-800 dark:text-slate-100 hover:border-slate-300 dark:hover:border-slate-600 focus:bg-white dark:focus:bg-ink-800 focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 pl-3 pr-9 py-2.5 text-sm transition cursor-pointer"
+            />
+            <button type="button" tabindex="-1" class="combobox-toggle absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+          <ul class="combobox-list hidden absolute z-30 left-0 right-0 mt-1 max-h-60 overflow-auto bg-white dark:bg-ink-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl text-sm"></ul>
+        </div>
+
+        <!-- BHK -->
+        <div class="md:col-span-2">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">BHK</label>
+          <select name="bhk" class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-ink-800 dark:text-slate-100 focus:bg-white dark:focus:bg-ink-800 focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 px-3 py-2.5 text-sm transition">
+            <option value="any">Any</option>
+            <option value="rk">RK / Studio</option>
+            <option value="1">1</option>
+            <option value="1.5">1.5</option>
+            <option value="2" selected>2</option>
+            <option value="2.5">2.5</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5+</option>
+          </select>
+        </div>
+
+        <!-- Furnishing -->
+        <div class="md:col-span-3">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Furnishing</label>
+          <select name="furnished" class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-ink-800 dark:text-slate-100 focus:bg-white dark:focus:bg-ink-800 focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 px-3 py-2.5 text-sm transition">
+            <option value="any">Any</option>
+            <option value="unfurnished">Unfurnished</option>
+            <option value="semi">Semi-Furnished</option>
+            <option value="fully">Fully Furnished</option>
+          </select>
+        </div>
+
+        <!-- Price -->
+        <div class="md:col-span-6">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+            Monthly rent (INR)
+          </label>
+          <div class="flex items-center gap-2">
+            <input type="number" name="price_min" min="0" step="500" value="15000" placeholder="Min"
+                   class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-ink-800 dark:text-slate-100 focus:bg-white dark:focus:bg-ink-800 focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 px-3 py-2.5 text-sm transition" />
+            <span class="text-slate-400 dark:text-slate-500">to</span>
+            <input type="number" name="price_max" min="0" step="500" value="35000" placeholder="Max"
+                   class="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-ink-800 dark:text-slate-100 focus:bg-white dark:focus:bg-ink-800 focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 px-3 py-2.5 text-sm transition" />
+          </div>
+          <p class="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
+            Listings outside this range are dropped (set min=0 or max=0 to disable that side).
+          </p>
+        </div>
+
+        <!-- Sources & options -->
+        <div class="md:col-span-6">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Sources</label>
+          <div class="flex flex-wrap gap-2">
+            {% set src_options = [
+              ("magicbricks", "MagicBricks", true),
+              ("99acres", "99acres", true),
+              ("olx", "OLX", true),
+              ("google", "Google", false),
+              ("nobroker", "NoBroker", false),
+              ("housing", "Housing.com", false),
+            ] %}
+            {% for value, label, default_on in src_options %}
+            <label class="inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-ink-800 hover:bg-white dark:hover:bg-ink-700 hover:border-brand-300 dark:text-slate-200 px-3 py-1.5 text-sm cursor-pointer transition has-[:checked]:bg-brand-50 has-[:checked]:border-brand-500 has-[:checked]:text-brand-700 dark:has-[:checked]:bg-brand-500/15 dark:has-[:checked]:text-brand-300 dark:has-[:checked]:border-brand-500/60">
+              <input type="checkbox" name="sources" value="{{ value }}" class="rounded text-brand-600 border-slate-300 dark:border-slate-600 focus:ring-brand-500" {% if default_on %}checked{% endif %} />
+              <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+          </div>
+          <p class="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
+            NoBroker / Housing.com need Playwright. Google needs API keys (see FAQ).
+          </p>
+        </div>
+
+        <!-- Pagination + cache toggle + submit -->
+        <div class="md:col-span-12 flex flex-col sm:flex-row sm:items-end gap-4 pt-2 border-t border-slate-100 dark:border-slate-800 mt-2">
+          <div class="flex items-center gap-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Pages / source</label>
+              <input type="number" name="pages" min="1" max="5" value="2" class="w-20 rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-ink-800 dark:text-slate-100 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Top N</label>
+              <input type="number" name="top" min="5" max="100" value="30" class="w-20 rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-ink-800 dark:text-slate-100 px-3 py-2 text-sm" />
+            </div>
+            <label class="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 select-none mt-5">
+              <input type="checkbox" name="use_cache" value="true" class="rounded text-brand-600 border-slate-300 dark:border-slate-600 focus:ring-brand-500" checked />
+              Cache (6h)
+            </label>
+          </div>
+          <div class="sm:ml-auto">
+            <button
+              type="submit"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-brand-600 hover:bg-brand-700 active:bg-brand-700 text-white font-semibold rounded-lg shadow-sm transition disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <span class="submit-text inline-flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                Search
+              </span>
+              <span class="loading-text items-center gap-2">
+                <svg class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="3" />
+                  <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                </svg>
+                Searching...
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <!-- Results -->
+  <section class="max-w-7xl mx-auto px-6 py-10">
+    <div id="results" class="results-pane">
+      <div class="text-center text-slate-500 dark:text-slate-400 py-16">
+        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto w-12 h-12 text-slate-300 dark:text-slate-600 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <p class="text-base">Set your filters above and hit <span class="font-semibold">Search</span>.</p>
+        <p class="text-sm mt-1">Live results in 5-30 seconds. Multiple sources searched in parallel.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to use -->
+  <section id="how-to-use" class="max-w-5xl mx-auto px-6 pb-12 scroll-mt-24">
+    <h2 class="text-2xl font-bold text-ink-900 dark:text-slate-50 mb-6">How to use</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white dark:bg-ink-900 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 p-5">
+        <div class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-brand-50 dark:bg-brand-500/15 text-brand-700 dark:text-brand-300 font-bold mb-3">1</div>
+        <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-1">Pick city + locality</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400">
+          Click the City and Locality fields to see curated suggestions, or just type any
+          neighbourhood &mdash; we'll search live.
+        </p>
+      </div>
+      <div class="bg-white dark:bg-ink-900 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 p-5">
+        <div class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-brand-50 dark:bg-brand-500/15 text-brand-700 dark:text-brand-300 font-bold mb-3">2</div>
+        <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-1">Set your filters</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400">
+          BHK, monthly rent range, furnishing. These are <strong>hard filters</strong> &mdash;
+          listings outside the price range or with the wrong BHK are dropped, not just down-ranked.
+        </p>
+      </div>
+      <div class="bg-white dark:bg-ink-900 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 p-5">
+        <div class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-brand-50 dark:bg-brand-500/15 text-brand-700 dark:text-brand-300 font-bold mb-3">3</div>
+        <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-1">Hit Search</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400">
+          All sources run in parallel. You'll see results stream in, then a final deduped + ranked
+          list with a match score. Click any card to open the original listing.
+        </p>
+      </div>
+    </div>
+
+    <!-- Tips strip -->
+    <div class="mt-6 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-2xl p-4 sm:p-5 flex gap-3">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>
+      <div class="text-sm text-amber-900 dark:text-amber-200">
+        <strong>Tip:</strong> a wider price range usually means more results to dedupe across sources.
+        If you get "no listings matched", the most common fix is widening the rent range or setting
+        BHK / Furnishing to <em>Any</em>. Listings whose price couldn't be parsed are kept and
+        ranked neutrally.
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="max-w-5xl mx-auto px-6 pb-16 scroll-mt-24">
+    <h2 class="text-2xl font-bold text-ink-900 dark:text-slate-50 mb-6">FAQ</h2>
+    <div class="space-y-3">
+      {% set faqs = [
+        ("How does the match score work?",
+         "Each listing is scored 0-1 across price-fit (35%), recency (25%), completeness (15%), source trust (15%), and exact BHK + furnishing match (10%). Higher = better fit for your query."),
+        ("Why are some listings missing a price?",
+         "Some sources show price as text only or hide it behind a contact button. We keep these listings (rather than drop them) and treat the price as neutral when ranking. They still pass the price filter."),
+        ("Why are NoBroker / Housing.com / Facebook off by default?",
+         "Their pages are fully JavaScript-rendered (or behind login). They need Playwright installed: python -m playwright install chromium. Facebook also needs you to log in."),
+        ("How do I enable Google search?",
+         "Copy .env.example to .env and fill in GOOGLE_CSE_KEY (Google Cloud API key with Custom Search API enabled) and GOOGLE_CSE_CX (Programmable Search Engine ID with 'Search the entire web' on)."),
+        ("Why do I sometimes see fewer results than expected?",
+         "Sources are aggressively deduped (exact URL + fuzzy title match within 5% price). The same flat is often listed on 2-3 sites and shows up once. Increase Pages/source if you need to dig deeper."),
+        ("Is my search cached?",
+         "Yes - results are cached for 6 hours per (source, query) on disk at ~/.rental_finder/cache.sqlite. Untick 'Cache (6h)' to force a fresh fetch."),
+      ] %}
+      {% for q, a in faqs %}
+      <details class="group bg-white dark:bg-ink-900 rounded-xl shadow-card border border-slate-100 dark:border-slate-800 px-5 py-4">
+        <summary class="flex items-center justify-between cursor-pointer list-none font-medium text-slate-900 dark:text-slate-100">
+          <span>{{ q }}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <p class="mt-3 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{{ a }}</p>
+      </details>
+      {% endfor %}
+    </div>
+  </section>
+
+  <footer class="max-w-7xl mx-auto px-6 py-8 text-center text-xs text-slate-400 dark:text-slate-500">
+    For personal rental search. We do not redistribute scraped data.
+  </footer>
+</div>
+
+<script>
+  // ---------------------------------------------------------------------------
+  // Theme toggle.
+  // ---------------------------------------------------------------------------
+  (function () {
+    const btn = document.getElementById("theme-toggle");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      const isDark = document.documentElement.classList.toggle("dark");
+      try { localStorage.setItem("rf-theme", isDark ? "dark" : "light"); } catch (e) { /* ignore */ }
+    });
+  })();
+
+  const cityToLocalities = {{ localities_by_city | tojson }};
+  const ALL_CITIES = {{ cities | tojson }};
+
+  /**
+   * Combobox component supporting both:
+   *   - a synchronous getOptions() returning string[]
+   *   - an async fetchOptions(query) returning [{label,value}] (or string[])
+   *
+   *   onCommit(val)  optional callback fired when a value is committed
+   */
+  function setupCombobox(rootEl, { getOptions, fetchOptions, onCommit } = {}) {
+    const input = rootEl.querySelector(".combobox-input");
+    const list = rootEl.querySelector(".combobox-list");
+    const toggle = rootEl.querySelector(".combobox-toggle");
+    let activeIdx = -1;
+    let shown = [];          // [{label, value, sub?}]
+    let renderToken = 0;
+    let debounceTimer = null;
+    let lastAbort = null;
+    // Tiny LRU cache of remote results so retyping a previous prefix is free.
+    const remoteCache = new Map();
+    const REMOTE_CACHE_MAX = 60;
+
+    function normaliseOpts(raw) {
+      // accepts ["foo","bar"] or [{label,value,sub}]
+      return raw.map((o) =>
+        typeof o === "string" ? { label: o, value: o } : o
+      );
+    }
+
+    function spinnerRow(text) {
+      return `
+        <li class="px-3 py-3 text-slate-500 dark:text-slate-400 text-xs flex items-center gap-2">
+          <svg class="animate-spin w-3.5 h-3.5 text-brand-600" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="3" />
+            <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+          </svg>
+          <span>${text}</span>
+        </li>`;
+    }
+
+    function paint(items, opts = {}) {
+      shown = items;
+      activeIdx = -1;
+      const fallback = opts.fallback || "";
+      const loadingText = opts.loadingText || "";
+      const itemsHtml = items.length === 0
+        ? ""
+        : items
+            .map((opt, i) => `
+              <li class="cb-opt px-3 py-2 cursor-pointer text-slate-700 dark:text-slate-200 hover:bg-brand-50 dark:hover:bg-brand-500/15 hover:text-brand-700 dark:hover:text-brand-300 flex items-start gap-2"
+                  data-i="${i}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span class="flex-1">
+                  <span class="block">${opt.label}</span>
+                  ${opt.sub ? `<span class="block text-xs text-slate-400 dark:text-slate-500">${opt.sub}</span>` : ""}
+                </span>
+              </li>`)
+            .join("");
+      const trailer = loadingText ? spinnerRow(loadingText) : "";
+      const placeholder = !itemsHtml && !trailer
+        ? `<li class="px-3 py-3 text-slate-400 dark:text-slate-500 italic text-xs">${fallback || "No suggestions yet."}</li>`
+        : "";
+      list.innerHTML = itemsHtml + trailer + placeholder;
+      list.classList.remove("hidden");
+    }
+
+    async function render(filterStr) {
+      const filter = (filterStr || "").trim();
+      const myToken = ++renderToken;
+
+      // 1) Curated/static options first (instant).
+      let staticItems = [];
+      if (getOptions) {
+        const opts = normaliseOpts(getOptions());
+        staticItems = filter
+          ? opts.filter((o) => o.label.toLowerCase().includes(filter.toLowerCase()))
+          : opts;
+      }
+
+      const willFetch = !!fetchOptions && filter.length >= 2;
+      paint(staticItems.slice(0, 50), {
+        loadingText: willFetch ? "Searching India for more places..." : "",
+        fallback:
+          filter.length === 0
+            ? "Start typing or pick from the list"
+            : "No matches yet. Type any city or locality.",
+      });
+
+      // 2) Kick off the remote search.
+      if (willFetch) {
+        // Cache hit - instant paint, no network.
+        const cached = remoteCache.get(filter.toLowerCase());
+        if (cached) {
+          const seen = new Set(staticItems.map((s) => s.label.toLowerCase()));
+          const merged = [
+            ...staticItems,
+            ...cached.filter((r) => !seen.has(r.label.toLowerCase())),
+          ];
+          paint(merged.slice(0, 50));
+          return;
+        }
+        if (debounceTimer) clearTimeout(debounceTimer);
+        // Lower debounce: previous 180ms felt sluggish for autocomplete.
+        debounceTimer = setTimeout(async () => {
+          // Abort any in-flight fetch from a prior keystroke.
+          if (lastAbort) lastAbort.abort();
+          const ctrl = new AbortController();
+          lastAbort = ctrl;
+          try {
+            const remote = normaliseOpts(await fetchOptions(filter, ctrl.signal));
+            if (myToken !== renderToken) return;
+            // Update LRU cache.
+            if (remoteCache.size >= REMOTE_CACHE_MAX) {
+              const firstKey = remoteCache.keys().next().value;
+              remoteCache.delete(firstKey);
+            }
+            remoteCache.set(filter.toLowerCase(), remote);
+            const seen = new Set(staticItems.map((s) => s.label.toLowerCase()));
+            const merged = [
+              ...staticItems,
+              ...remote.filter((r) => !seen.has(r.label.toLowerCase())),
+            ];
+            paint(merged.slice(0, 50), {
+              fallback: `Couldn't find "${filter}". You can still use what you typed.`,
+            });
+          } catch (e) {
+            if (e.name === "AbortError") return;  // superseded; ignore
+            if (myToken !== renderToken) return;
+            paint(staticItems.slice(0, 50), {
+              fallback: "Live search unavailable. Use what you typed.",
+            });
+          }
+        }, 90);
+      }
+    }
+
+    function close() {
+      list.classList.add("hidden");
+      activeIdx = -1;
+    }
+
+    function commit(idx) {
+      if (idx < 0 || idx >= shown.length) return;
+      const opt = shown[idx];
+      input.value = opt.value || opt.label;
+      close();
+      onCommit && onCommit(input.value, opt);
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    function highlight() {
+      list.querySelectorAll("li.cb-opt").forEach((el, i) => {
+        if (i === activeIdx) {
+          el.classList.add("bg-brand-50", "text-brand-700", "dark:bg-brand-500/15", "dark:text-brand-300");
+          el.scrollIntoView({ block: "nearest" });
+        } else {
+          el.classList.remove("bg-brand-50", "text-brand-700", "dark:bg-brand-500/15", "dark:text-brand-300");
+        }
+      });
+    }
+
+    // Open on click/focus, even if nothing typed.
+    input.addEventListener("focus", () => render(""));
+    input.addEventListener("click", () => render(""));
+    toggle.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (list.classList.contains("hidden")) {
+        input.focus();
+        render("");
+      } else {
+        close();
+      }
+    });
+
+    input.addEventListener("input", () => render(input.value));
+    input.addEventListener("keydown", (e) => {
+      if (list.classList.contains("hidden") && e.key !== "Escape") render("");
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeIdx = Math.min(shown.length - 1, activeIdx + 1);
+        highlight();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeIdx = Math.max(-1, activeIdx - 1);
+        highlight();
+      } else if (e.key === "Enter") {
+        if (activeIdx >= 0) {
+          e.preventDefault();
+          commit(activeIdx);
+        } else {
+          close();
+          onCommit && onCommit(input.value);
+        }
+      } else if (e.key === "Escape") {
+        close();
+      }
+    });
+    list.addEventListener("mousedown", (e) => {
+      const li = e.target.closest("li.cb-opt");
+      if (!li) return;
+      e.preventDefault();
+      commit(Number(li.dataset.i));
+    });
+    document.addEventListener("click", (e) => {
+      if (!rootEl.contains(e.target)) close();
+    });
+  }
+
+  const cityRoot = document.querySelector("[data-combobox='city']");
+  const localityRoot = document.querySelector("[data-combobox='locality']");
+  const cityInput = cityRoot.querySelector("input");
+  const localityInput = localityRoot.querySelector("input");
+  const localityHint = document.getElementById("locality-hint");
+
+  function updateLocalityHint() {
+    const curated = cityToLocalities[cityInput.value] || [];
+    if (curated.length > 0) {
+      localityHint.textContent = `${curated.length} popular + live search`;
+    } else if (cityInput.value) {
+      localityHint.textContent = "Live search any locality";
+    } else {
+      localityHint.textContent = "";
+    }
+  }
+
+  // Live remote fetchers backed by /api/places (Photon-first).
+  async function fetchCities(q, signal) {
+    const r = await fetch(
+      `/api/places?scope=city&limit=8&q=${encodeURIComponent(q)}`,
+      { signal }
+    );
+    if (!r.ok) return [];
+    const data = await r.json();
+    return (data.results || []).map((p) => ({
+      label: p.name,
+      value: p.name,
+      sub: p.state || p.label,
+    }));
+  }
+
+  async function fetchLocalities(q, signal) {
+    const params = new URLSearchParams({ scope: "locality", limit: "8", q });
+    if (cityInput.value) params.set("near", cityInput.value);
+    const r = await fetch(`/api/places?${params.toString()}`, { signal });
+    if (!r.ok) return [];
+    const data = await r.json();
+    return (data.results || []).map((p) => ({
+      label: p.name,
+      value: p.name,
+      sub: p.label.replace(p.name + ", ", "") || p.state,
+    }));
+  }
+
+  setupCombobox(cityRoot, {
+    getOptions: () => ALL_CITIES,
+    fetchOptions: fetchCities,
+    onCommit: () => {
+      const curated = cityToLocalities[cityInput.value] || [];
+      const stillValid = curated.includes(localityInput.value);
+      if (!stillValid) {
+        localityInput.value = "";
+      }
+      updateLocalityHint();
+      setTimeout(() => localityInput.focus(), 50);
+    },
+  });
+
+  setupCombobox(localityRoot, {
+    getOptions: () => cityToLocalities[cityInput.value] || [],
+    fetchOptions: fetchLocalities,
+  });
+
+  updateLocalityHint();
+
+  // ---------------------------------------------------------------------------
+  // Client-side sort. Cards carry data-* attributes; no refetch needed.
+  // The chosen sort persists across the streaming "done" re-render.
+  // ---------------------------------------------------------------------------
+  let lastSort = "score-desc";
+
+  function getCards() {
+    const grid = document.getElementById("results-grid");
+    if (!grid) return { grid: null, cards: [] };
+    return { grid, cards: Array.from(grid.querySelectorAll("article[data-source]")) };
+  }
+
+  function num(el, attr, fallback) {
+    const v = el.dataset[attr];
+    if (v === undefined || v === "") return fallback;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : fallback;
+  }
+
+  function ts(el) {
+    const v = el.dataset.posted;
+    if (!v) return -Infinity;
+    const t = Date.parse(v);
+    return Number.isFinite(t) ? t : -Infinity;
+  }
+
+  function sortCards(mode) {
+    const { grid, cards } = getCards();
+    if (!grid || cards.length === 0) return;
+
+    const cmp = (a, b) => {
+      switch (mode) {
+        case "price-asc":
+          return num(a, "price", Infinity) - num(b, "price", Infinity);
+        case "price-desc":
+          return num(b, "price", -Infinity) - num(a, "price", -Infinity);
+        case "recent":
+          return ts(b) - ts(a);
+        case "completeness":
+          return num(b, "completeness", 0) - num(a, "completeness", 0);
+        case "score-desc":
+        default:
+          return num(b, "score", 0) - num(a, "score", 0);
+      }
+    };
+
+    cards.sort(cmp).forEach((c) => grid.appendChild(c));
+  }
+
+  function setActivePill(value) {
+    document.querySelectorAll("[data-sort-bar] [data-sort-value]").forEach((btn) => {
+      btn.dataset.active = btn.dataset.sortValue === value ? "true" : "false";
+    });
+  }
+
+  // Event delegation: pill buttons (new UI) + legacy <select data-sort>.
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-sort-value]");
+    if (!btn) return;
+    e.preventDefault();
+    lastSort = btn.dataset.sortValue;
+    setActivePill(lastSort);
+    sortCards(lastSort);
+  });
+  document.addEventListener("change", (e) => {
+    const sel = e.target.closest("select[data-sort]");
+    if (!sel) return;
+    lastSort = sel.value;
+    sortCards(lastSort);
+  });
+
+  // After the "done" event swaps in _final.html, re-apply the user's sort.
+  function reapplyLastSort() {
+    const sel = document.querySelector("select[data-sort]");
+    if (sel) sel.value = lastSort;
+    setActivePill(lastSort);
+    sortCards(lastSort);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Streaming search via NDJSON over fetch.
+  // ---------------------------------------------------------------------------
+
+  const form = document.getElementById("search-form");
+  const submitBtn = form.querySelector("button[type='submit']");
+  const resultsEl = document.getElementById("results");
+  let activeAbort = null;
+
+  function buildBody() {
+    const fd = new FormData(form);
+    // FormData encodes multi-checkboxes correctly. Ensure boolean cache toggle.
+    if (!fd.has("use_cache")) fd.set("use_cache", "false");
+    return fd;
+  }
+
+  function setSubmitting(on) {
+    submitBtn.disabled = on;
+    if (on) submitBtn.classList.add("htmx-request");
+    else submitBtn.classList.remove("htmx-request");
+  }
+
+  function startSkeleton() {
+    resultsEl.innerHTML = `
+      <div id="search-status" class="mb-5 bg-white dark:bg-ink-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-card p-4">
+        <div class="flex items-center gap-3 mb-3">
+          <svg class="animate-spin w-4 h-4 text-brand-600" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="3" />
+            <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+          </svg>
+          <div class="text-sm font-medium text-slate-700 dark:text-slate-200">Searching sources in parallel...</div>
+        </div>
+        <div id="status-pills" class="flex flex-wrap gap-2"></div>
+        <div class="mt-3 h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+          <div id="status-bar" class="h-full bg-brand-500 transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+      <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        ${Array.from({ length: 3 }).map(() => `
+          <div class="bg-white dark:bg-ink-900 rounded-2xl shadow-card border border-slate-100 dark:border-slate-800 p-5 space-y-3">
+            <div class="skeleton h-4 w-24 rounded"></div>
+            <div class="skeleton h-6 w-3/4 rounded"></div>
+            <div class="skeleton h-4 w-2/3 rounded"></div>
+            <div class="flex gap-2 pt-2">
+              <div class="skeleton h-7 w-16 rounded-full"></div>
+              <div class="skeleton h-7 w-20 rounded-full"></div>
+            </div>
+          </div>`).join("")}
+      </div>
+    `;
+  }
+
+  function pillFor(name, status, count, elapsed_s) {
+    const baseColor = (() => {
+      if (status === "error") return "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/40";
+      if (status === "running") return "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/40 animate-pulse";
+      if (status === "done" && count > 0) return "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40";
+      if (status === "done") return "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700";
+      return "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700";
+    })();
+    const dot = status === "error" ? "bg-rose-500" : status === "running" ? "bg-amber-500" : (count > 0 ? "bg-emerald-500" : "bg-slate-400");
+    return `
+      <span data-pill="${name}" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${baseColor}">
+        <span class="w-1.5 h-1.5 rounded-full ${dot}"></span>
+        <span>${name}</span>
+        ${status === "done" ? `<span class="opacity-70">${count}</span>` : ""}
+        ${elapsed_s != null ? `<span class="opacity-50">${elapsed_s.toFixed(1)}s</span>` : ""}
+        ${status === "running" ? `<span class="opacity-70">searching...</span>` : ""}
+      </span>`;
+  }
+
+  function upsertPill(name, status, count, elapsed_s) {
+    const pillsEl = document.getElementById("status-pills");
+    if (!pillsEl) return;
+    const existing = pillsEl.querySelector(`[data-pill="${name}"]`);
+    const html = pillFor(name, status, count, elapsed_s);
+    if (existing) existing.outerHTML = html;
+    else pillsEl.insertAdjacentHTML("beforeend", html);
+  }
+
+  function setProgress(done, total) {
+    const bar = document.getElementById("status-bar");
+    if (bar && total > 0) bar.style.width = `${Math.round((done / total) * 100)}%`;
+  }
+
+  function clearGrid() {
+    const grid = document.getElementById("results-grid");
+    if (grid) grid.innerHTML = "";
+  }
+
+  async function streamSearch(form) {
+    if (activeAbort) activeAbort.abort();
+    const ctrl = new AbortController();
+    activeAbort = ctrl;
+    setSubmitting(true);
+    startSkeleton();
+
+    const body = buildBody();
+    let resp;
+    try {
+      resp = await fetch("/search/stream", {
+        method: "POST",
+        body,
+        signal: ctrl.signal,
+      });
+    } catch (e) {
+      setSubmitting(false);
+      resultsEl.innerHTML = `<div class="bg-rose-50 dark:bg-rose-500/15 border border-rose-200 dark:border-rose-500/40 rounded-xl p-4 text-rose-700 dark:text-rose-300 text-sm">Request failed: ${e.message}</div>`;
+      return;
+    }
+    if (!resp.ok || !resp.body) {
+      const text = await resp.text();
+      setSubmitting(false);
+      resultsEl.innerHTML = `<div class="bg-rose-50 dark:bg-rose-500/15 border border-rose-200 dark:border-rose-500/40 rounded-xl p-4 text-rose-700 dark:text-rose-300 text-sm">Server returned ${resp.status}: ${text.slice(0, 500)}</div>`;
+      return;
+    }
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let firstResultArrived = false;
+    let totalSources = 0;
+    let doneSources = 0;
+
+    try {
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        let idx;
+        while ((idx = buffer.indexOf("\n")) >= 0) {
+          const line = buffer.slice(0, idx).trim();
+          buffer = buffer.slice(idx + 1);
+          if (!line) continue;
+          let evt;
+          try { evt = JSON.parse(line); } catch { continue; }
+          handleEvent(evt);
+        }
+      }
+    } catch (e) {
+      if (e.name !== "AbortError") {
+        const errBox = document.createElement("div");
+        errBox.className = "bg-rose-50 dark:bg-rose-500/15 border border-rose-200 dark:border-rose-500/40 rounded-xl p-4 text-rose-700 dark:text-rose-300 text-sm mt-4";
+        errBox.textContent = `Stream error: ${e.message}`;
+        resultsEl.appendChild(errBox);
+      }
+    } finally {
+      setSubmitting(false);
+      activeAbort = null;
+    }
+
+    function handleEvent(evt) {
+      if (evt.type === "start") {
+        totalSources = evt.total_sources;
+        // Pre-add a pill for each source so user sees them in flight.
+        const pillsEl = document.getElementById("status-pills");
+        if (pillsEl) pillsEl.innerHTML = evt.sources.map((s) => pillFor(s, "running", null, null)).join("");
+      } else if (evt.type === "source") {
+        doneSources++;
+        upsertPill(evt.name, evt.error ? "error" : "done", evt.count, evt.elapsed_s);
+        setProgress(doneSources, totalSources);
+        if (evt.html_cards && evt.html_cards.length) {
+          if (!firstResultArrived) { clearGrid(); firstResultArrived = true; }
+          const grid = document.getElementById("results-grid");
+          if (grid) {
+            evt.html_cards.forEach((c) => grid.insertAdjacentHTML("beforeend", c));
+          }
+        }
+      } else if (evt.type === "done") {
+        // Replace grid with the deduped + ranked final view + summary footer.
+        if (evt.final_html) {
+          resultsEl.innerHTML = evt.final_html;
+          // Re-apply the user's chosen sort (default "Best match" preserves rank).
+          reapplyLastSort();
+        }
+      } else if (evt.type === "error") {
+        const box = document.createElement("div");
+        box.className = "bg-rose-50 dark:bg-rose-500/15 border border-rose-200 dark:border-rose-500/40 rounded-xl p-4 text-rose-700 dark:text-rose-300 text-sm mt-4";
+        box.textContent = evt.message || "Unknown error";
+        resultsEl.appendChild(box);
+      }
+    }
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    streamSearch(form);
+  });
+</script>
+
+{% endblock %}

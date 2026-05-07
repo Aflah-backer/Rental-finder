@@ -1,0 +1,43 @@
+# Fly.io app config for rental_finder.
+#
+# First-time setup: see DEPLOY.md "Option 2 - Fly.io" or run:
+#   fly launch --copy-config --no-deploy --region bom
+# It will prompt for a unique app name (rename `app` below if "rental-finder"
+# is already taken on Fly).
+#
+# Update later: just `fly deploy` from this folder.
+
+app = "rental-finder"
+primary_region = "bom"  # Mumbai - lowest latency for Indian users
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8000"
+  WORKERS = "1"
+  HTTP_TIMEOUT = "20"
+  CACHE_TTL = "21600"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"      # idle machines suspend (free tier friendly)
+  auto_start_machines = true       # wake on first request
+  min_machines_running = 0
+  processes = ["app"]
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "15s"
+    method = "get"
+    path = "/healthz"
+
+[[mounts]]
+  source = "rf_data"
+  destination = "/home/app/.rental_finder"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

@@ -1,0 +1,23 @@
+# --- Secrets ---
+# Never commit anything that holds keys, tokens, or credentials.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Browser / scraper state ---
+# Playwright stores logged-in cookies here for the optional Facebook source.
+fb_state.json
+playwright-state*
+
+# --- Run-time artifacts ---
+diag_dumps/
+__pycache__/
+*.pyc
+*.pyo
+
+# --- User caches & outputs ---
+results.json
+results.csv
+smoke_results.*

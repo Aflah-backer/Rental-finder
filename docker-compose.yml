@@ -1,0 +1,56 @@
+# Local prod-mode test:
+#   docker compose up --build
+#
+# Browse: http://localhost:8000
+#
+# The .env file is mounted via env_file so secrets stay on your filesystem
+# and are NOT baked into the image.
+#
+# To scale concurrency: WORKERS=2 docker compose up
+#   (more workers = more parallel requests, but each worker has its own
+#    SQLite cache - if you need shared cache across workers, swap to Redis;
+#    see DEPLOY.md "Production-mode launch".)
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Set to 1 to also install Playwright + Chromium for the Facebook source.
+        INCLUDE_PLAYWRIGHT: "0"
+    image: rental-finder:latest
+    container_name: rental-finder
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Reasonable production defaults; .env can override.
+      HTTP_TIMEOUT: "20"
+      CACHE_TTL: "21600"
+      WORKERS: "${WORKERS:-1}"
+      PORT: "8000"
+    volumes:
+      # Persist the SQLite cache across container restarts.
+      - rf_cache:/home/app/.rental_finder
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    # Defensive limits so a runaway scrape doesn't OOM the host.
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+volumes:
+  rf_cache:
