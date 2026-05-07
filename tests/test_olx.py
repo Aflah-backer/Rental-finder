@@ -28,4 +28,4 @@ def test_build_search_url():
     url = build_search_url(q)
     assert "/bangalore/for-rent-houses-apartments_c1725" in url
     assert "rooms_eq_2" in url
-    assert "price_between_10000_to_30000" in url
+    assert "rent_between_10000_to_30000" in url

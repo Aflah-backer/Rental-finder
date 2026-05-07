@@ -18,6 +18,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import sys
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -38,6 +39,10 @@ from ..models import Listing, SearchQuery
 from ..ranker import DEFAULT_TRUST, rank
 from ..sources.base import BaseSource
 from .places import _get_client, search_places, shutdown_http_client
+
+# Playwright needs subprocess support on Windows; force Proactor policy.
+if sys.platform.startswith("win") and hasattr(asyncio, "WindowsProactorEventLoopPolicy"):
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
 load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
 
@@ -210,7 +215,10 @@ async def search(
             status_code=400,
         )
 
-    src_objects = _build_sources(sources or ["magicbricks", "99acres", "olx"], enable_facebook=enable_facebook)
+    src_objects = _build_sources(
+        sources or ["magicbricks", "99acres", "olx", "google"],
+        enable_facebook=enable_facebook,
+    )
     if not src_objects:
         return TEMPLATES.TemplateResponse(
             request,
@@ -349,7 +357,7 @@ async def search_stream(
         return StreamingResponse(err_gen(), media_type="application/x-ndjson")
 
     src_list = _build_sources(
-        sources or ["magicbricks", "99acres", "olx"],
+        sources or ["magicbricks", "99acres", "olx", "google"],
         enable_facebook=enable_facebook,
     )
     if not src_list:

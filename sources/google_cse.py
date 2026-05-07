@@ -81,6 +81,16 @@ class GoogleCseSource(BaseSource):
             return None
         return key, cx
 
+    @staticmethod
+    def _looks_valid_key(key: str) -> bool:
+        # Typical Google API keys look like AIza... and are ~39 chars.
+        return key.startswith("AIza") and len(key) >= 30 and " " not in key and "http" not in key.lower()
+
+    @staticmethod
+    def _looks_valid_cx(cx: str) -> bool:
+        # Typical CSE IDs are alnum tokens with optional colon-suffix.
+        return len(cx) >= 10 and " " not in cx and "http" not in cx.lower() and "." not in cx
+
     async def search(self, query: SearchQuery) -> list[Listing]:
         creds = self._credentials()
         if not creds:
@@ -90,6 +100,11 @@ class GoogleCseSource(BaseSource):
             )
             return []
         key, cx = creds
+        if not self._looks_valid_key(key) or not self._looks_valid_cx(cx):
+            raise RuntimeError(
+                "Invalid GOOGLE_CSE_KEY / GOOGLE_CSE_CX in .env. "
+                "Set a real API key (AIza...) and valid CSE ID."
+            )
         q_text = build_query_string(query)
         results: list[Listing] = []
         async with make_client(headers={"Accept": "application/json"}) as client:

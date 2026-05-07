@@ -175,16 +175,71 @@ def parse_listings_html(html: str) -> list[Listing]:
 class HousingSource(BaseSource):
     """Housing.com source.
 
-    Status: SRP is fully client-side rendered. Without JavaScript
-    execution (Playwright), no listings can be extracted. Class kept
-    so the parser test fixture stays useful and to make it trivial to
-    add a Playwright path later.
+    SRP is mostly client-rendered. This source uses Playwright first and
+    falls back to plain HTTP parsing when browser automation is unavailable.
     """
 
     name = "housing"
     trust = 0.7
 
+    async def _search_playwright(self, query: SearchQuery) -> list[Listing]:
+        try:
+            from playwright.async_api import TimeoutError as PlaywrightTimeoutError
+            from playwright.async_api import async_playwright
+        except ImportError as e:
+            raise RuntimeError("Playwright is not installed. Run: python -m pip install playwright") from e
+
+        results: list[Listing] = []
+        seen: set[str] = set()
+        async with async_playwright() as pw:
+            browser = await pw.chromium.launch(headless=True)
+            context = await browser.new_context(viewport={"width": 1366, "height": 920})
+            page = await context.new_page()
+            try:
+                for page_num in range(1, query.max_pages + 1):
+                    url = build_search_url(query, page=page_num)
+                    self._log("page %s (playwright): %s", page_num, url)
+                    try:
+                        await page.goto(url, wait_until="domcontentloaded", timeout=35000)
+                        await page.wait_for_timeout(2200)
+                        for _ in range(2):
+                            await page.mouse.wheel(0, 2600)
+                            await page.wait_for_timeout(500)
+                    except PlaywrightTimeoutError:
+                        self._warn("page %s timed out in browser", page_num)
+                        break
+                    except Exception as e:  # noqa: BLE001
+                        self._warn("page %s failed in browser: %s", page_num, e)
+                        break
+
+                    html = await page.content()
+                    page_listings = parse_listings_html(html)
+                    page_added = 0
+                    for listing in page_listings:
+                        key = str(listing.url)
+                        if key in seen:
+                            continue
+                        seen.add(key)
+                        results.append(listing)
+                        page_added += 1
+                    self._log("page %s -> %d listings", page_num, page_added)
+                    if page_added == 0:
+                        break
+                    await polite_sleep()
+            finally:
+                await context.close()
+                await browser.close()
+        return results
+
     async def search(self, query: SearchQuery) -> list[Listing]:
+        # Preferred path: render client-side listing pages in a browser context.
+        try:
+            return await self._search_playwright(query)
+        except RuntimeError as e:
+            self._warn("Playwright unavailable: %s. Falling back to HTTP parser.", e)
+        except Exception as e:  # noqa: BLE001
+            self._warn("Playwright path failed, falling back to HTTP parser: %s", e)
+
         results: list[Listing] = []
         async with make_client() as client:
             for page in range(1, query.max_pages + 1):
@@ -200,8 +255,8 @@ class HousingSource(BaseSource):
                 if not page_listings:
                     if page == 1:
                         self._warn(
-                            "Housing.com SRP is fully client-rendered; no SSR data. "
-                            "Listings can only be scraped via Playwright."
+                            "Housing.com returned no SSR listings; install Chromium for better results: "
+                            "python -m playwright install chromium"
                         )
                     break
                 results.extend(page_listings)

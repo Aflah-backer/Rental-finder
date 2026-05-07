@@ -46,7 +46,8 @@ def build_search_url(query: SearchQuery, page: int = 1) -> str:
     if query.price_min or query.price_max:
         lo = query.price_min or 0
         hi = query.price_max or 200000
-        filters.append(f"price_between_{lo}_to_{hi}")
+        # OLX uses rent_between on this SRP category.
+        filters.append(f"rent_between_{lo}_to_{hi}")
     qs_parts: list[str] = []
     if filters:
         qs_parts.append("filter=" + quote_plus(",".join(filters)))

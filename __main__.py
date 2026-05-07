@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -19,6 +20,10 @@ from .models import SearchQuery
 from .output import render_summary, render_table, write_auto
 from .ranker import DEFAULT_TRUST, rank
 from .sources.base import BaseSource
+
+# Keep subprocess-capable event loop on Windows for Playwright sources.
+if sys.platform.startswith("win") and hasattr(asyncio, "WindowsProactorEventLoopPolicy"):
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
 # Sources registry: name -> factory
 ALL_SOURCES: dict[str, type[BaseSource]] = {}
